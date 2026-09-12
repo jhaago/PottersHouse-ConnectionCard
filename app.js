@@ -1,6 +1,7 @@
 const DB_NAME = "pottershouse-connection-card";
 const DB_VERSION = 1;
 const STORE = "connections";
+const DEFAULT_SYNC_URL = "https://script.google.com/macros/s/AKfycbxjutZvjWHqyQYZixZs3fVyApTZgF62woPNxXOSJBdkVkMCqzAmTWOLClhvqaQYuKLe/exec";
 let db;
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -9,7 +10,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const altarWorker = localStorage.getItem("defaultAltarWorker") || localStorage.getItem("defaultRecorder") || "";
   document.getElementById("defaultAltarWorker").value = altarWorker;
   document.getElementById("altarWorker").value = altarWorker;
-  document.getElementById("syncUrl").value = localStorage.getItem("syncUrl") || "";
   setToday();
 
   bindNavigation();
@@ -131,12 +131,8 @@ function bindForm() {
 function bindSettings() {
   document.getElementById("saveSettings").addEventListener("click", () => {
     const altarWorker = value("defaultAltarWorker");
-    const syncUrl = value("syncUrl");
-
     localStorage.setItem("defaultAltarWorker", altarWorker);
-    localStorage.setItem("syncUrl", syncUrl);
     document.getElementById("altarWorker").value = altarWorker;
-
     showToast("Settings saved");
   });
 }
@@ -213,7 +209,7 @@ async function refreshEntries() {
 }
 
 async function syncPending(showMessages = true) {
-  const url = (localStorage.getItem("syncUrl") || "").trim();
+  const url = DEFAULT_SYNC_URL;
 
   if (!navigator.onLine) {
     if (showMessages) showToast("No internet — entries are safe on this phone");
@@ -221,10 +217,7 @@ async function syncPending(showMessages = true) {
   }
 
   if (!url) {
-    if (showMessages) {
-      showToast("Add the Google sync URL in Settings first");
-      showView("settingsView");
-    }
+    if (showMessages) showToast("Sync is not configured yet");
     return;
   }
 
