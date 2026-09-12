@@ -12,52 +12,84 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="topbar">
+  <header class="app-bar">
     <div>
-      <div class="eyebrow">THE POTTER'S HOUSE</div>
-      <h1>Connection Card</h1>
+      <strong>Connection Card</strong>
+      <span id="statusPill" class="status-pill">Offline ready</span>
     </div>
-    <div id="statusPill" class="status-pill">Offline ready</div>
   </header>
 
   <main>
     <section id="formView" class="view active">
-      <div class="card intro">
-        <h2>New connection</h2>
-        <p>Save now. Sync later when internet is available.</p>
-      </div>
+      <form id="connectionForm" class="paper-card">
+        <div class="brand-panel">
+          <div class="brand-lockup">
+            <div class="brand-mark" aria-hidden="true"><span></span></div>
+            <div class="brand-copy">
+              <small>THE</small>
+              <div><strong>POTTER'S</strong> <b>HOUSE</b></div>
+              <span>CHRISTIAN FELLOWSHIP CHURCH</span>
+            </div>
+          </div>
+        </div>
 
-      <form id="connectionForm" class="card form-card">
-        <label>Name *<input id="name" required autocomplete="name"></label>
-        <label>Phone<input id="phone" inputmode="tel" autocomplete="tel"></label>
-        <label>Email<input id="email" inputmode="email" autocomplete="email"></label>
-        <label>Address / area<input id="address" autocomplete="street-address"></label>
+        <div class="black-panel">
+          <h1>CONNECTION CARD</h1>
 
-        <div class="two-col">
-          <label>Age<input id="age" type="number" inputmode="numeric" min="0" max="120"></label>
-          <label>First-time decision?
-            <select id="firstTimeDecision">
-              <option value="">Not recorded</option>
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
+          <label class="card-field">
+            <span>NAME:</span>
+            <input id="name" required autocomplete="name" aria-label="Name">
+          </label>
+
+          <label class="card-field">
+            <span>EMAIL:</span>
+            <input id="email" inputmode="email" autocomplete="email" aria-label="Email">
+          </label>
+
+          <label class="card-field">
+            <span>PHONE:</span>
+            <input id="phone" inputmode="tel" autocomplete="tel" aria-label="Phone">
+          </label>
+
+          <label class="card-field card-field-address">
+            <span>ADDRESS:</span>
+            <textarea id="address" rows="2" autocomplete="street-address" aria-label="Address"></textarea>
+          </label>
+
+          <label class="card-field">
+            <span>ALTAR WORKER:</span>
+            <input id="altarWorker" autocomplete="name" aria-label="Altar Worker">
+          </label>
+
+          <label class="card-field">
+            <span>DATE:</span>
+            <input id="cardDate" type="date" aria-label="Date">
           </label>
         </div>
 
-        <label>Connected by<input id="recordedBy" placeholder="Your name"></label>
-        <label>Notes<textarea id="notes" rows="4" placeholder="Anything useful for follow-up..."></textarea></label>
+        <div class="decision-panel">
+          <div class="decision-row">
+            <span class="decision-label">FIRST TIME DECISION:</span>
+            <label class="decision-choice"><input type="radio" name="firstTimeDecision" value="Yes"><span>Y</span></label>
+            <label class="decision-choice"><input type="radio" name="firstTimeDecision" value="No"><span>N</span></label>
+            <label class="age-field"><span>AGE:</span><input id="age" type="number" inputmode="numeric" min="0" max="120" aria-label="Age"></label>
+          </div>
+        </div>
 
-        <label class="check-row">
-          <input id="permissionToContact" type="checkbox">
-          <span>Person has agreed that the local church may contact them</span>
-        </label>
-
-        <button class="primary" type="submit">SAVE CONNECTION</button>
+        <div class="red-footer">
+          <strong>THE POTTER'S HOUSE CHRISTIAN CHURCH</strong>
+          <span>480 MARSHALL RD, WHITEMAN</span>
+          <span>PH: 0403 062 005</span>
+          <span>POTTERSHOUSE.COM</span>
+        </div>
       </form>
+
+      <button id="saveConnectionButton" class="save-button" type="submit" form="connectionForm">SAVE CONNECTION</button>
+      <p class="save-help">Saved on this phone first. Internet is not required.</p>
     </section>
 
     <section id="entriesView" class="view">
-      <div class="card entries-head">
+      <div class="utility-card entries-head">
         <div>
           <h2>Saved entries</h2>
           <p id="entriesSummary">0 saved</p>
@@ -65,16 +97,16 @@
         <button id="syncButton" class="secondary" type="button">SYNC NOW</button>
       </div>
       <div id="entriesList" class="entries-list"></div>
-      <div id="emptyState" class="card empty-state">No entries yet.</div>
+      <div id="emptyState" class="utility-card empty-state">No entries yet.</div>
     </section>
 
     <section id="settingsView" class="view">
-      <div class="card settings-card">
+      <div class="utility-card settings-card">
         <h2>Settings</h2>
-        <label>Your name<input id="defaultRecorder" placeholder="Used for Connected by"></label>
+        <label>Default altar worker<input id="defaultAltarWorker" autocomplete="name"></label>
         <label>Google sync URL<input id="syncUrl" inputmode="url" placeholder="Apps Script web app URL"></label>
-        <p class="help">You only need to set this once on each phone.</p>
-        <button id="saveSettings" class="primary" type="button">SAVE SETTINGS</button>
+        <p class="help">These are app settings only and are not extra connection-card fields.</p>
+        <button id="saveSettings" class="save-button compact" type="button">SAVE SETTINGS</button>
       </div>
     </section>
   </main>
