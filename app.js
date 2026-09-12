@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   bindForm();
   bindSettings();
   bindSync();
+  bindNativeLifecycle();
 
   window.addEventListener("online", () => {
     updateConnectivity();
@@ -26,7 +27,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   updateConnectivity();
   await refreshEntries();
 
-  if ("serviceWorker" in navigator) {
+  const canUseServiceWorker = "serviceWorker" in navigator && ["http:", "https:"].includes(location.protocol);
+  if (canUseServiceWorker) {
     navigator.serviceWorker.register("sw.js").catch(console.error);
   }
 
@@ -139,6 +141,23 @@ function bindSettings() {
 
 function bindSync() {
   document.getElementById("syncButton").addEventListener("click", () => syncPending(true));
+}
+
+function bindNativeLifecycle() {
+  const appPlugin = window.Capacitor?.Plugins?.App;
+  if (!appPlugin || typeof appPlugin.addListener !== "function") return;
+
+  appPlugin.addListener("appStateChange", state => {
+    if (state?.isActive) {
+      updateConnectivity();
+      syncPending(false);
+    }
+  });
+
+  appPlugin.addListener("resume", () => {
+    updateConnectivity();
+    syncPending(false);
+  });
 }
 
 function updateConnectivity() {

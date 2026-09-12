@@ -1,0 +1,111 @@
+name: iOS Simulator Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/native-app-shell
+
+jobs:
+  build-ios-simulator:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Prepare bundled app files
+        run: npm run prepare:native
+
+      - name: Create iOS project if missing
+        run: |
+          if [ ! -d ios ]; then
+            npx cap add ios
+          fi
+
+      - name: Sync Capacitor iOS
+        run: npx cap sync ios
+
+      - name: Apply app icon
+        run: npm run apply:native-icons
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Stabilize Git package downloads
+        run: |
+          git config --global http.version HTTP/1.1
+          git config --global http.lowSpeedLimit 1000
+          git config --global http.lowSpeedTime 120
+
+      - name: Resolve Swift packages with retry
+        run: |
+          set -o pipefail
+          mkdir -p build/SourcePackages
+
+          for attempt in 1 2 3; do
+            echo "Swift package resolution attempt ${attempt}/3"
+            if xcodebuild \
+              -resolvePackageDependencies \
+              -workspace ios/App/App.xcworkspace \
+              -scheme App \
+              -clonedSourcePackagesDirPath build/SourcePackages; then
+              echo "Swift package resolution succeeded."
+              exit 0
+            fi
+
+            if [ "$attempt" -lt 3 ]; then
+              echo "Package resolution failed; cleaning incomplete checkouts before retry."
+              rm -rf build/SourcePackages/checkouts
+              rm -rf build/SourcePackages/repositories
+              sleep $((attempt * 10))
+            fi
+          done
+
+          echo "Swift package resolution failed after 3 attempts."
+          exit 1
+
+      - name: Build iOS Simulator app
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -workspace ios/App/App.xcworkspace \
+            -scheme App \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/ios-derived \
+            -clonedSourcePackagesDirPath build/SourcePackages \
+            -disableAutomaticPackageResolution \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build | tee build/ios-build.log
+
+      - name: Package simulator app
+        run: |
+          APP_PATH="build/ios-derived/Build/Products/Debug-iphonesimulator/App.app"
+          test -d "$APP_PATH"
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" build/ConnectionCard-Simulator.app.zip
+
+      - name: Package generated Xcode workspace
+        run: |
+          test -d ios/App/App.xcworkspace
+          test -d ios/App/Pods
+          ditto -c -k --sequesterRsrc --keepParent ios build/ConnectionCard-iOS-Xcode-Project.zip
+
+      - name: Upload iOS simulator artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: connection-card-ios-simulator
+          path: |
+            build/ConnectionCard-Simulator.app.zip
+            build/ConnectionCard-iOS-Xcode-Project.zip
+            build/ios-build.log

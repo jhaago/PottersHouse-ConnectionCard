@@ -1,0 +1,26 @@
+{
+  "name": "pottershouse-connection-card",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prepare:native": "node scripts/prepare-native.mjs",
+    "apply:native-icons": "node scripts/apply-native-icons.mjs",
+    "cap:add:android": "npm run prepare:native && npx cap add android && npm run apply:native-icons",
+    "cap:sync:android": "npm run prepare:native && npx cap sync android && npm run apply:native-icons",
+    "android:open": "npm run cap:sync:android && npx cap open android",
+    "cap:add:ios": "npm run prepare:native && npx cap add ios && npm run apply:native-icons",
+    "cap:sync:ios": "npm run prepare:native && npx cap sync ios && npm run apply:native-icons",
+    "ios:open": "npm run cap:sync:ios && npx cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/app": "^7.0.0",
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/ios": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.0.0",
+    "sharp": "^0.34.3"
+  }
+}
