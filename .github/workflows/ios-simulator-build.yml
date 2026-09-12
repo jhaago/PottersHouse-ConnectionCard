@@ -95,10 +95,17 @@ jobs:
           test -d "$APP_PATH"
           ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" build/ConnectionCard-Simulator.app.zip
 
+      - name: Package generated Xcode workspace
+        run: |
+          test -d ios/App/App.xcworkspace
+          test -d ios/App/Pods
+          ditto -c -k --sequesterRsrc --keepParent ios build/ConnectionCard-iOS-Xcode-Project.zip
+
       - name: Upload iOS simulator artifact
         uses: actions/upload-artifact@v4
         with:
           name: connection-card-ios-simulator
           path: |
             build/ConnectionCard-Simulator.app.zip
+            build/ConnectionCard-iOS-Xcode-Project.zip
             build/ios-build.log
