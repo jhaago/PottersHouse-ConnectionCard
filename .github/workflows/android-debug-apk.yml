@@ -40,6 +40,9 @@ jobs:
       - name: Sync Capacitor Android
         run: npx cap sync android
 
+      - name: Apply app icon
+        run: npm run apply:native-icons
+
       - name: Build debug APK
         run: |
           chmod +x android/gradlew
