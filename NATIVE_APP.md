@@ -31,7 +31,7 @@ Requirements:
 
 - Node.js
 - Android Studio
-- JDK 17
+- JDK 21
 
 Commands:
 
