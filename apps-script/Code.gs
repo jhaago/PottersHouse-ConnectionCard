@@ -1,4 +1,16 @@
 const SHEET_NAME = "Connections";
+const HEADERS = [
+  "Record ID",
+  "Name",
+  "Email",
+  "Phone",
+  "Address",
+  "Altar Worker",
+  "Date",
+  "First Time Decision",
+  "Age",
+  "Received At"
+];
 
 function doPost(e) {
   try {
@@ -13,20 +25,10 @@ function doPost(e) {
 
     if (!sheet) {
       sheet = spreadsheet.insertSheet(SHEET_NAME);
-      sheet.appendRow([
-        "Record ID",
-        "Created At",
-        "Name",
-        "Phone",
-        "Email",
-        "Address / Area",
-        "Age",
-        "First-time Decision",
-        "Connected By",
-        "Notes",
-        "Permission to Contact",
-        "Received At"
-      ]);
+      sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
+      sheet.setFrozenRows(1);
+    } else if (sheet.getLastRow() === 0) {
+      sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
       sheet.setFrozenRows(1);
     }
 
@@ -40,16 +42,14 @@ function doPost(e) {
 
     sheet.appendRow([
       data.id,
-      data.createdAt || "",
       data.name || "",
-      data.phone || "",
       data.email || "",
+      data.phone || "",
       data.address || "",
-      data.age || "",
+      data.altarWorker || data.recordedBy || "",
+      data.cardDate || "",
       data.firstTimeDecision || "",
-      data.recordedBy || "",
-      data.notes || "",
-      data.permissionToContact === true ? "Yes" : "No",
+      data.age || "",
       new Date()
     ]);
 
