@@ -1,0 +1,69 @@
+name: iOS Simulator Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/native-app-shell
+
+jobs:
+  build-ios-simulator:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Prepare bundled app files
+        run: npm run prepare:native
+
+      - name: Create iOS project if missing
+        run: |
+          if [ ! -d ios ]; then
+            npx cap add ios
+          fi
+
+      - name: Sync Capacitor iOS
+        run: npx cap sync ios
+
+      - name: Apply app icon
+        run: npm run apply:native-icons
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build iOS Simulator app
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -workspace ios/App/App.xcworkspace \
+            -scheme App \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/ios-derived \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build | tee build/ios-build.log
+
+      - name: Package simulator app
+        run: |
+          APP_PATH="build/ios-derived/Build/Products/Debug-iphonesimulator/App.app"
+          test -d "$APP_PATH"
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" build/ConnectionCard-Simulator.app.zip
+
+      - name: Upload iOS simulator artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: connection-card-ios-simulator
+          path: |
+            build/ConnectionCard-Simulator.app.zip
+            build/ios-build.log
