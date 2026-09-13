@@ -73,18 +73,50 @@ jobs:
           test -d "$APP_PATH"
           ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" build/ConnectionCard-Xcode15-Simulator.app.zip
 
-      - name: Package generated Xcode workspace
+      - name: Package self-contained local Xcode workspace
         run: |
+          set -e
+          PACKAGE_DIR="build/connection-card-ios-xcode15-local"
+          rm -rf "$PACKAGE_DIR"
+          mkdir -p "$PACKAGE_DIR/node_modules/@capacitor"
+
           test -d ios/App/App.xcworkspace
           test -d ios/App/Pods
-          ditto -c -k --sequesterRsrc --keepParent ios build/ConnectionCard-Xcode15-Project.zip
+          test -d node_modules/@capacitor/ios
+          test -d node_modules/@capacitor/core
+          test -d node_modules/@capacitor/app
+
+          ditto ios "$PACKAGE_DIR/ios"
+          ditto node_modules/@capacitor/ios "$PACKAGE_DIR/node_modules/@capacitor/ios"
+          ditto node_modules/@capacitor/core "$PACKAGE_DIR/node_modules/@capacitor/core"
+          ditto node_modules/@capacitor/app "$PACKAGE_DIR/node_modules/@capacitor/app"
+          cp package.json "$PACKAGE_DIR/package.json"
+
+          cat > "$PACKAGE_DIR/OPEN-ME.txt" <<'EOF'
+          CONNECTION CARD — XCODE 15 LOCAL BUILD
+
+          Open this file in Xcode:
+          ios/App/App.xcworkspace
+
+          Keep the ios and node_modules folders together in this same parent folder.
+          The Capacitor CocoaPods project uses relative paths to the bundled Capacitor sources.
+          You do not need to run npm install or CocoaPods before opening this prepared workspace.
+          EOF
+
+          ditto -c -k --sequesterRsrc --keepParent "$PACKAGE_DIR" build/ConnectionCard-Xcode15-Local-Project.zip
+
+      - name: Verify packaged Capacitor sources
+        run: |
+          test -f build/connection-card-ios-xcode15-local/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/CapacitorCordova.h
+          test -f build/connection-card-ios-xcode15-local/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/CDVWebViewProcessPoolFactory.h
+          test -f build/connection-card-ios-xcode15-local/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/NSDictionary+CordovaPreferences.h
 
       - name: Upload Xcode 15 compatibility artifact
         uses: actions/upload-artifact@v4
         with:
-          name: connection-card-ios-xcode15
+          name: connection-card-ios-xcode15-self-contained
           path: |
             build/ConnectionCard-Xcode15-Simulator.app.zip
-            build/ConnectionCard-Xcode15-Project.zip
+            build/ConnectionCard-Xcode15-Local-Project.zip
             build/ios-build.log
           retention-days: 90
