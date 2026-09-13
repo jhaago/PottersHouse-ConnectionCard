@@ -106,6 +106,7 @@ function bindForm() {
       cardDate: value("cardDate"),
       firstTimeDecision: decision ? decision.value : "",
       age: value("age"),
+      notes: value("notes"),
       synced: false,
       syncedAt: ""
     };
@@ -189,6 +190,7 @@ async function refreshEntries() {
             ${cardDate ? escapeHtml(displayDate(cardDate)) : ""}
             ${record.phone ? " · " + escapeHtml(record.phone) : ""}
             ${worker ? "<br>Altar worker: " + escapeHtml(worker) : ""}
+            ${record.notes ? "<br>Notes: " + escapeHtml(record.notes) : ""}
           </div>
         </div>
         <span class="sync-state ${record.synced ? "synced" : "waiting"}">${record.synced ? "✓ Synced" : "Waiting"}</span>
