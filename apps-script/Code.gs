@@ -35,7 +35,7 @@ function doPost(e) {
     if (lastRow >= 2) {
       const existingIds = sheet.getRange(2, 1, lastRow - 1, 1).getValues().flat();
       if (existingIds.includes(data.id)) {
-        return jsonResponse({ ok: true, duplicate: true });
+        return jsonResponse({ ok: true, duplicate: true, notesSupported: true });
       }
     }
 
@@ -53,7 +53,7 @@ function doPost(e) {
       data.notes || ""
     ]);
 
-    return jsonResponse({ ok: true });
+    return jsonResponse({ ok: true, notesSupported: true });
   } catch (error) {
     return jsonResponse({ ok: false, error: String(error) });
   }
