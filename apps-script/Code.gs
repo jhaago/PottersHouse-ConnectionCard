@@ -9,7 +9,8 @@ const HEADERS = [
   "Date",
   "First Time Decision",
   "Age",
-  "Received At"
+  "Received At",
+  "Notes"
 ];
 
 function doPost(e) {
@@ -25,12 +26,10 @@ function doPost(e) {
 
     if (!sheet) {
       sheet = spreadsheet.insertSheet(SHEET_NAME);
-      sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
-      sheet.setFrozenRows(1);
-    } else if (sheet.getLastRow() === 0) {
-      sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
-      sheet.setFrozenRows(1);
     }
+
+    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
+    sheet.setFrozenRows(1);
 
     const lastRow = sheet.getLastRow();
     if (lastRow >= 2) {
@@ -50,7 +49,8 @@ function doPost(e) {
       data.cardDate || "",
       data.firstTimeDecision || "",
       data.age || "",
-      new Date()
+      new Date(),
+      data.notes || ""
     ]);
 
     return jsonResponse({ ok: true });
