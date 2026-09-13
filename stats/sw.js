@@ -1,4 +1,4 @@
-const CACHE = "pottershouse-mission-stats-v2";
+const CACHE = "pottershouse-mission-stats-v3";
 const ASSETS = [
   "./",
   "./index.html",
