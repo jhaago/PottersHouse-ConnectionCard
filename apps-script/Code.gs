@@ -10,7 +10,8 @@ const HEADERS = [
   "First Time Decision",
   "Age",
   "Received At",
-  "Notes"
+  "Notes",
+  "Healed"
 ];
 
 function doPost(e) {
@@ -35,7 +36,7 @@ function doPost(e) {
     if (lastRow >= 2) {
       const existingIds = sheet.getRange(2, 1, lastRow - 1, 1).getValues().flat();
       if (existingIds.includes(data.id)) {
-        return jsonResponse({ ok: true, duplicate: true, notesSupported: true });
+        return jsonResponse({ ok: true, duplicate: true, notesSupported: true, healedSupported: true });
       }
     }
 
@@ -50,10 +51,11 @@ function doPost(e) {
       data.firstTimeDecision || "",
       data.age || "",
       new Date(),
-      data.notes || ""
+      data.notes || "",
+      data.healed || ""
     ]);
 
-    return jsonResponse({ ok: true, notesSupported: true });
+    return jsonResponse({ ok: true, notesSupported: true, healedSupported: true });
   } catch (error) {
     return jsonResponse({ ok: false, error: String(error) });
   }
