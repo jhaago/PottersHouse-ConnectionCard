@@ -1,6 +1,6 @@
 {
   "name": "pottershouse-connection-card",
-  "version": "0.2.0",
+  "version": "0.2.1-xcode15",
   "private": true,
   "type": "module",
   "scripts": {
@@ -14,13 +14,13 @@
     "ios:open": "npm run cap:sync:ios && npx cap open ios"
   },
   "dependencies": {
-    "@capacitor/android": "^7.0.0",
-    "@capacitor/app": "^7.0.0",
-    "@capacitor/core": "^7.0.0",
-    "@capacitor/ios": "^7.0.0"
+    "@capacitor/android": "6.2.2",
+    "@capacitor/app": "6.0.3",
+    "@capacitor/core": "6.2.2",
+    "@capacitor/ios": "6.2.2"
   },
   "devDependencies": {
-    "@capacitor/cli": "^7.0.0",
+    "@capacitor/cli": "6.2.2",
     "sharp": "^0.34.3"
   }
 }
