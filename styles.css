@@ -101,17 +101,31 @@ main{width:min(590px,100%);margin:0 auto;padding:14px 12px 18px}
 .card-field textarea{resize:none;line-height:1.2;min-height:67px}
 
 .decision-panel{background:#f4f2ed;padding:18px 14px 19px}
-.decision-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+.decision-row{
+  display:grid;
+  grid-template-columns:minmax(150px,1fr) 36px 36px auto;
+  align-items:center;
+  column-gap:8px;
+  width:100%;
+}
 .healed-row{margin-top:12px}
-.decision-label{font-family:"Arial Narrow","Helvetica Neue",Arial,sans-serif;font-size:12px;font-weight:950;letter-spacing:.03em}
-.decision-choice{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:900}
+.decision-label{
+  justify-self:end;
+  white-space:nowrap;
+  font-family:"Arial Narrow","Helvetica Neue",Arial,sans-serif;
+  font-size:12px;
+  font-weight:950;
+  letter-spacing:.03em;
+}
+.decision-choice{display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
 .decision-choice input{position:absolute;opacity:0;pointer-events:none}
 .decision-choice span{
   width:36px;height:36px;display:grid;place-items:center;border:2px solid #1b1b1b;background:#f7f5f0;font-size:14px
 }
 .decision-choice input:checked+span{background:#151515;color:#fff}
-.age-field{display:flex;align-items:center;gap:7px;margin-left:auto;font-size:12px;font-weight:950}
+.age-field{display:flex;align-items:center;gap:7px;margin-left:0;font-size:12px;font-weight:950}
 .age-field input{width:67px;height:43px;border:2px solid #1b1b1b;border-radius:0;background:#f7f5f0;padding:5px 7px;font-size:18px;text-align:center;outline:none}
+.healed-row .decision-choice{grid-column:2}
 
 .save-button{
   width:100%;
@@ -181,10 +195,21 @@ main{width:min(590px,100%);margin:0 auto;padding:14px 12px 18px}
   .card-field{grid-template-columns:88px minmax(0,1fr);gap:6px}
   .card-field>span{font-size:10px}
   .card-field input,.card-field textarea{font-size:17px}
-  .decision-panel{padding:15px 9px}
-  .decision-row{gap:6px}
+  .decision-panel{padding:15px 9px 17px}
+  .decision-row{
+    grid-template-columns:minmax(0,1fr) 32px 32px auto;
+    column-gap:6px;
+  }
   .decision-label{font-size:10px}
   .decision-choice span{width:32px;height:32px}
-  .age-field{margin-left:0;font-size:10px}
+  .age-field{gap:5px;font-size:10px}
   .age-field input{width:57px;height:38px}
+  .healed-row{margin-top:10px}
+}
+
+@media(max-width:360px){
+  .decision-panel{padding-left:6px;padding-right:6px}
+  .decision-row{grid-template-columns:minmax(0,1fr) 30px 30px auto;column-gap:5px}
+  .decision-choice span{width:30px;height:30px}
+  .age-field input{width:52px}
 }
