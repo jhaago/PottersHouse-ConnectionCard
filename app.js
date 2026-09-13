@@ -94,6 +94,7 @@ function bindForm() {
 
     const decision = document.querySelector('input[name="firstTimeDecision"]:checked');
     const altarWorker = value("altarWorker");
+    const healed = document.getElementById("healed").checked;
 
     const record = {
       id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
@@ -107,6 +108,7 @@ function bindForm() {
       firstTimeDecision: decision ? decision.value : "",
       age: value("age"),
       notes: value("notes"),
+      healed: healed ? "Yes" : "",
       synced: false,
       syncedAt: ""
     };
@@ -190,6 +192,7 @@ async function refreshEntries() {
             ${cardDate ? escapeHtml(displayDate(cardDate)) : ""}
             ${record.phone ? " · " + escapeHtml(record.phone) : ""}
             ${worker ? "<br>Altar worker: " + escapeHtml(worker) : ""}
+            ${record.healed ? "<br>Healed: Yes" : ""}
             ${record.notes ? "<br>Notes: " + escapeHtml(record.notes) : ""}
           </div>
         </div>
@@ -247,6 +250,7 @@ async function syncPending(showMessages = true) {
       const result = await response.json();
       if (!result.ok) throw new Error(result.error || "Sync rejected");
       if (record.notes && !result.notesSupported) throw new Error("Sync receiver needs the notes update");
+      if (record.healed && !result.healedSupported) throw new Error("Sync receiver needs the healed update");
 
       record.synced = true;
       record.syncedAt = new Date().toISOString();
