@@ -1,8 +1,13 @@
 {
+  "id": "/PottersHouse-ConnectionCard/",
   "name": "Potter's House Connection Card",
   "short_name": "Connection Card",
   "description": "Offline-first connection card capture for mission outreach.",
-  "start_url": "./",
+  "start_url": "/PottersHouse-ConnectionCard/",
+  "scope": "/PottersHouse-ConnectionCard/",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
   "display": "standalone",
   "background_color": "#f2f1ee",
   "theme_color": "#111111",
