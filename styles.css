@@ -103,10 +103,12 @@ main{width:min(590px,100%);margin:0 auto;padding:14px 12px 18px}
 .decision-panel{background:#f4f2ed;padding:18px 14px 19px}
 .decision-row{
   display:grid;
-  grid-template-columns:minmax(150px,1fr) 36px 36px auto;
+  grid-template-columns:170px 36px 36px 106px;
   align-items:center;
   column-gap:8px;
-  width:100%;
+  width:max-content;
+  max-width:100%;
+  margin:0 auto;
 }
 .healed-row{margin-top:12px}
 .decision-label{
@@ -197,8 +199,11 @@ main{width:min(590px,100%);margin:0 auto;padding:14px 12px 18px}
   .card-field input,.card-field textarea{font-size:17px}
   .decision-panel{padding:15px 9px 17px}
   .decision-row{
-    grid-template-columns:minmax(0,1fr) 32px 32px auto;
+    grid-template-columns:140px 32px 32px 95px;
     column-gap:6px;
+    width:max-content;
+    margin-left:auto;
+    margin-right:auto;
   }
   .decision-label{font-size:10px}
   .decision-choice span{width:32px;height:32px}
@@ -209,7 +214,7 @@ main{width:min(590px,100%);margin:0 auto;padding:14px 12px 18px}
 
 @media(max-width:360px){
   .decision-panel{padding-left:6px;padding-right:6px}
-  .decision-row{grid-template-columns:minmax(0,1fr) 30px 30px auto;column-gap:5px}
+  .decision-row{grid-template-columns:132px 30px 30px 88px;column-gap:5px}
   .decision-choice span{width:30px;height:30px}
   .age-field input{width:52px}
 }
