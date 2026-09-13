@@ -1,0 +1,17 @@
+{
+  "name": "Potter's House Mission Stats",
+  "short_name": "Mission Stats",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ecebe7",
+  "theme_color": "#111111",
+  "icons": [
+    {
+      "src": "../assets/app-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
