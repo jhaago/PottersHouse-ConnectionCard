@@ -1,4 +1,4 @@
-const CACHE="pottershouse-connection-card-v9";
+const CACHE="pottershouse-connection-card-v10";
 const ASSETS=[
   "./",
   "./index.html",
