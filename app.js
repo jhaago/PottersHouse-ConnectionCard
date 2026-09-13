@@ -246,6 +246,7 @@ async function syncPending(showMessages = true) {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const result = await response.json();
       if (!result.ok) throw new Error(result.error || "Sync rejected");
+      if (record.notes && !result.notesSupported) throw new Error("Sync receiver needs the notes update");
 
       record.synced = true;
       record.syncedAt = new Date().toISOString();
