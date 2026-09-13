@@ -14,6 +14,53 @@ const HEADERS = [
   "Healed"
 ];
 
+function doGet() {
+  try {
+    const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = spreadsheet.getSheetByName(SHEET_NAME);
+
+    if (!sheet || sheet.getLastRow() < 2) {
+      return jsonResponse({
+        ok: true,
+        connections: 0,
+        healed: 0,
+        updatedAt: new Date().toISOString()
+      });
+    }
+
+    const values = sheet.getDataRange().getValues();
+    const headers = values[0].map(value => String(value).trim());
+    const recordIdIndex = headers.indexOf("Record ID");
+    const healedIndex = headers.indexOf("Healed");
+
+    let connections = 0;
+    let healed = 0;
+
+    for (let rowIndex = 1; rowIndex < values.length; rowIndex++) {
+      const row = values[rowIndex];
+      const hasRecord = recordIdIndex >= 0
+        ? String(row[recordIdIndex] || "").trim() !== ""
+        : row.some(value => String(value || "").trim() !== "");
+
+      if (!hasRecord) continue;
+      connections++;
+
+      if (healedIndex >= 0 && String(row[healedIndex] || "").trim().toLowerCase() === "yes") {
+        healed++;
+      }
+    }
+
+    return jsonResponse({
+      ok: true,
+      connections,
+      healed,
+      updatedAt: new Date().toISOString()
+    });
+  } catch (error) {
+    return jsonResponse({ ok: false, error: String(error) });
+  }
+}
+
 function doPost(e) {
   try {
     const data = JSON.parse((e.postData && e.postData.contents) || "{}");
