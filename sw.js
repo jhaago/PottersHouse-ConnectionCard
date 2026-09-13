@@ -1,4 +1,4 @@
-const CACHE="pottershouse-connection-card-v12";
+const CACHE="pottershouse-connection-card-v13";
 const ASSETS=[
   "./",
   "./index.html",
@@ -27,13 +27,31 @@ self.addEventListener("activate",event=>{
 
 self.addEventListener("fetch",event=>{
   if(event.request.method!=="GET")return;
+
+  if(event.request.mode==="navigate"){
+    event.respondWith(
+      fetch(event.request).then(response=>{
+        if(response.ok){
+          const copy=response.clone();
+          caches.open(CACHE).then(cache=>cache.put(event.request,copy));
+        }
+        return response;
+      }).catch(async()=>{
+        return (await caches.match(event.request)) || caches.match("./index.html");
+      })
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then(cached=>
       cached || fetch(event.request).then(response=>{
-        const copy=response.clone();
-        caches.open(CACHE).then(cache=>cache.put(event.request,copy));
+        if(response.ok){
+          const copy=response.clone();
+          caches.open(CACHE).then(cache=>cache.put(event.request,copy));
+        }
         return response;
-      }).catch(()=>caches.match("./index.html"))
+      })
     )
   );
 });
