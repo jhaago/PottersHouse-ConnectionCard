@@ -1,8 +1,12 @@
 {
+  "id": "/PottersHouse-ConnectionCard/stats/",
   "name": "Potter's House Mission Stats",
   "short_name": "Mission Stats",
-  "start_url": "./",
-  "scope": "./",
+  "start_url": "/PottersHouse-ConnectionCard/stats/",
+  "scope": "/PottersHouse-ConnectionCard/stats/",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
   "display": "standalone",
   "background_color": "#ecebe7",
   "theme_color": "#111111",
