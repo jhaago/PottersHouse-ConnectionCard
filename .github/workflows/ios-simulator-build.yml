@@ -1,35 +1,50 @@
-name: iOS Simulator Build
+name: iOS Xcode 15 Compatibility Build
 
 on:
   workflow_dispatch:
   push:
     branches:
-      - feature/native-app-shell
+      - feature/ios-xcode15-compat
 
 jobs:
-  build-ios-simulator:
-    runs-on: macos-latest
+  build-ios-xcode15:
+    runs-on: macos-14
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Select an installed Xcode 15 release
+        run: |
+          set -e
+          XCODE_PATH="$(find /Applications -maxdepth 1 -type d -name 'Xcode_15*.app' | sort -V | tail -1)"
+          if [ -z "$XCODE_PATH" ]; then
+            echo "No Xcode 15 installation was found on this runner."
+            ls -1 /Applications | grep '^Xcode' || true
+            exit 1
+          fi
+          echo "Using $XCODE_PATH"
+          sudo xcode-select -s "$XCODE_PATH/Contents/Developer"
+          xcodebuild -version
 
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install dependencies
+      - name: Install Capacitor 6 dependencies
         run: npm install --no-audit --no-fund
+
+      - name: Show Capacitor version
+        run: npx cap --version
 
       - name: Prepare bundled app files
         run: npm run prepare:native
 
-      - name: Create iOS project if missing
+      - name: Create iOS project
         run: |
-          if [ ! -d ios ]; then
-            npx cap add ios
-          fi
+          rm -rf ios
+          npx cap add ios
 
       - name: Sync Capacitor iOS
         run: npx cap sync ios
@@ -37,45 +52,10 @@ jobs:
       - name: Apply app icon
         run: npm run apply:native-icons
 
-      - name: Show Xcode version
-        run: xcodebuild -version
-
-      - name: Stabilize Git package downloads
-        run: |
-          git config --global http.version HTTP/1.1
-          git config --global http.lowSpeedLimit 1000
-          git config --global http.lowSpeedTime 120
-
-      - name: Resolve Swift packages with retry
+      - name: Build iOS Simulator app with Xcode 15
         run: |
           set -o pipefail
-          mkdir -p build/SourcePackages
-
-          for attempt in 1 2 3; do
-            echo "Swift package resolution attempt ${attempt}/3"
-            if xcodebuild \
-              -resolvePackageDependencies \
-              -workspace ios/App/App.xcworkspace \
-              -scheme App \
-              -clonedSourcePackagesDirPath build/SourcePackages; then
-              echo "Swift package resolution succeeded."
-              exit 0
-            fi
-
-            if [ "$attempt" -lt 3 ]; then
-              echo "Package resolution failed; cleaning incomplete checkouts before retry."
-              rm -rf build/SourcePackages/checkouts
-              rm -rf build/SourcePackages/repositories
-              sleep $((attempt * 10))
-            fi
-          done
-
-          echo "Swift package resolution failed after 3 attempts."
-          exit 1
-
-      - name: Build iOS Simulator app
-        run: |
-          set -o pipefail
+          mkdir -p build
           xcodebuild \
             -workspace ios/App/App.xcworkspace \
             -scheme App \
@@ -83,8 +63,6 @@ jobs:
             -sdk iphonesimulator \
             -destination 'generic/platform=iOS Simulator' \
             -derivedDataPath build/ios-derived \
-            -clonedSourcePackagesDirPath build/SourcePackages \
-            -disableAutomaticPackageResolution \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             build | tee build/ios-build.log
@@ -93,19 +71,20 @@ jobs:
         run: |
           APP_PATH="build/ios-derived/Build/Products/Debug-iphonesimulator/App.app"
           test -d "$APP_PATH"
-          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" build/ConnectionCard-Simulator.app.zip
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" build/ConnectionCard-Xcode15-Simulator.app.zip
 
       - name: Package generated Xcode workspace
         run: |
           test -d ios/App/App.xcworkspace
           test -d ios/App/Pods
-          ditto -c -k --sequesterRsrc --keepParent ios build/ConnectionCard-iOS-Xcode-Project.zip
+          ditto -c -k --sequesterRsrc --keepParent ios build/ConnectionCard-Xcode15-Project.zip
 
-      - name: Upload iOS simulator artifact
+      - name: Upload Xcode 15 compatibility artifact
         uses: actions/upload-artifact@v4
         with:
-          name: connection-card-ios-simulator
+          name: connection-card-ios-xcode15
           path: |
-            build/ConnectionCard-Simulator.app.zip
-            build/ConnectionCard-iOS-Xcode-Project.zip
+            build/ConnectionCard-Xcode15-Simulator.app.zip
+            build/ConnectionCard-Xcode15-Project.zip
             build/ios-build.log
+          retention-days: 90
