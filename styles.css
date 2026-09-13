@@ -102,6 +102,7 @@ main{width:min(590px,100%);margin:0 auto;padding:14px 12px 18px}
 
 .decision-panel{background:#f4f2ed;padding:18px 14px 19px}
 .decision-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+.healed-row{margin-top:12px}
 .decision-label{font-family:"Arial Narrow","Helvetica Neue",Arial,sans-serif;font-size:12px;font-weight:950;letter-spacing:.03em}
 .decision-choice{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:900}
 .decision-choice input{position:absolute;opacity:0;pointer-events:none}
