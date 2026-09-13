@@ -1,11 +1,12 @@
-const CACHE="pottershouse-connection-card-v5";
+const CACHE="pottershouse-connection-card-v6";
 const ASSETS=[
   "./",
   "./index.html",
   "./styles.css",
   "./app.js",
   "./manifest.webmanifest",
-  "./assets/brand-header.jpg"
+  "./assets/brand-header.jpg",
+  "./assets/app-icon.png"
 ];
 
 self.addEventListener("install",event=>{
